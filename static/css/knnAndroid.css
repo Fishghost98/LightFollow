@@ -1,0 +1,113 @@
+body {
+  background-color: black;
+  background-image: url('../img/1.png');
+  background-repeat: no-repeat;
+  background-position: 0% 0%;
+  background-size: cover;
+}
+
+.title {
+  text-align: center;
+  margin-top: 15px;
+  height: 100px;
+  font-size: 40px;
+  color: aliceblue;
+}
+
+.users {
+  margin-top: 10px;
+  margin-left: 20px;
+}
+.users p {
+  color: aliceblue;
+  font-size: 12px;
+  float: left;
+}
+.users span {
+  color: lawngreen;
+  font-size: 12px;
+  float: left;
+}
+
+.right {
+  text-align: center;
+}
+
+.module1 {
+  margin-left: 20px;
+  font-size: 18px;
+  color: whitesmoke;
+}
+
+.inputDiv {
+  margin-top: 40px;
+  margin-left: 20px;
+}
+
+.inputDiv input {
+  color: black;
+  font-size: 15px;
+  width: 40%;
+}
+
+.inputDiv span {
+  margin-left: 20px;
+  font-size: 15px;
+  color: whitesmoke;
+  float: left;
+}
+
+.inputDiv div {
+  margin-top: 20px;
+}
+
+.dataTable td {
+  font-size: 13px;
+}
+
+.dataTable {
+  width: 90%;
+}
+
+.video {
+  margin-top: 10px;
+}
+
+.steps {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.steps p{
+  color:whitesmoke;
+  font-size: 18px;
+}
+
+.steps span {
+  font-size: 15px;
+  color: lawngreen;
+}
+
+.movieName {
+  line-height: 34px;
+}
+
+.funny {
+  line-height: 34px;
+}
+
+.hug {
+  line-height: 34px;
+}
+
+.fight {
+  line-height: 34px;
+}
+
+.Kvalue {
+  line-height: 34px;
+}
+
+.result {
+  line-height: 34px;
+}

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据展示页面</title>
+
+  <script src="./js/socket.io.js"></script>
+  <script src="./js/jquery-3.5.1.min.js"></script>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script src="./live2d/autoload.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+  <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <script src="./js/echarts.js"></script>
+  <style>
+    body {
+      background-color: black;
+      background-image: url('../img/1.png');
+      background-repeat: no-repeat;
+      background-position: 0% 0%;
+      background-size: cover;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 50px;
+      height: 100px;
+      color: azure;
+    }
+
+    .tem {
+      margin-left: 80px;
+      font-size: 18px;
+      color: whitesmoke;
+    }
+
+    .hum {
+      font-size: 18px;
+      margin-left: 100px;
+      color: whitesmoke;
+    }
+
+    .light {
+      margin-left: 100px;
+      font-size: 18px;
+      color: whitesmoke;
+    }
+
+    .module1 {
+      margin-left: 80px;
+      font-size: 18px;
+      color: whitesmoke;
+    }
+
+    .module2 {
+      margin-left: 80px;
+      margin-top: 20px;
+      font-size: 18px;
+      float: left;
+      color: whitesmoke;
+    }
+
+    form {
+      margin-left: 80px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>MQTT控制台</h1>
+  <p class="module1">
+    客户端1<span id="module1" style="margin-left: 10px;">离线</span>
+    <span id="date" style="margin-left: 20px;color: aliceblue;font-size: 16px;">2021.10.07</span>
+  </p>
+  <p>
+  <div style="margin-top: 40px;">
+    <span class="tem">温度：<span id="temp" style="color: lawngreen;font-size: 25px;">**</span>&nbsp;&nbsp;&nbsp;&deg;C
+    </span>
+    <span class="hum">湿度：<span id="hum" style="color: lawngreen;font-size: 25px;">**</span>&nbsp;&nbsp;&nbsp;%</span>
+    <!--<span class="light">光照强度：<span id="light" style="color: lawngreen;font-size: 25px;">**</span>--> 
+  </div>
+  <div class="temhumchart" style="width:500px;height:350px;margin-left: 75px;margin-top: 30px;" id="chart"></div>
+  </p>
+
+
+
+
+  <script>
+
+    $(function () {
+      var socket = io.connect("http://localhost:3000/");
+      var chartDom = document.getElementById('chart');
+      var myChart = echarts.init(chartDom, 'dark');
+      var option;
+      tem = new Array();
+      hum = new Array();
+      date = new Array();
+
+      //获取光照强度
+      socket.on('light', function (data) {
+        $("#light").html(data.msg);
+      });
+
+      $("#Rate").on('click', function () {
+        var message = document.getElementById('message').value;
+        socket.emit('sendRate', message);
+      })
+
+      //获取RGB灯状态
+      socket.on("mychart", function (data) {
+        var data = data.msg;
+        var json = []
+        json = JSON.parse(data)
+        datas = eval(json)
+
+        for (let list of datas) {
+          tem.push(list.temperature);
+          hum.push(list.humidity);
+          date.push(list.date);
+        }
+
+        option = {
+          title: {
+            text: '温湿度监测'
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {},
+          toolbox: {
+            show: true,
+            feature: {
+              dataZoom: {
+                yAxisIndex: 'none'
+              },
+              dataView: { readOnly: false },
+              magicType: { type: ['line', 'bar'] },
+              restore: {},
+              saveAsImage: {}
+            }
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: date,
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              formatter: '{value} °C'
+            }
+          },
+          series: [
+            {
+              name: '湿度',
+              type: 'line',
+              data: hum,
+              markPoint: {
+                data: [
+                  { type: 'max', name: 'Max' },
+                  { type: 'min', name: 'Min' }
+                ]
+              },
+              markLine: {
+                data: [{ type: 'average', name: 'Avg' }]
+              }
+            },
+            {
+              name: '温度',
+              type: 'line',
+              data: tem,
+              markPoint: {
+                data: [{ type: 'max', name: 'Max' },
+                { type: 'min', name: 'Min' }]
+              },
+              markLine: {
+                data: [
+                  { type: 'average', name: 'Avg' },
+                ]
+              }
+            }
+          ]
+        };
+
+        option && myChart.setOption(option);
+      });
+
+      window.onload = function () {
+        socket.emit('getRecentMessage', "")
+      }
+
+      socket.on('dht', function (data) {
+        var json = JSON.parse(data.msg);
+        $("#temp").html(json.temperature);
+        $("#hum").html(json.humidity);
+      })
+
+      socket.on('rate', function (data) {
+        var rate = data.msg.toString();
+        document.getElementById('message').placeholder = rate;
+      })
+
+      //获取温湿度数据
+      socket.on('newdht', function (data) {
+        var json = JSON.parse(data.msg);
+        if (json.temperature > 30) {
+          alert("警告，温度超过限定值！ ")
+        } else if (json.humidity > 50) {
+          alert("警告，湿度超过限定值！")
+        }
+        $("#temp").html(json.temperature);
+        $("#hum").html(json.humidity);
+        var nowTime = new Date().toLocaleTimeString('chinese', { hour12: false });
+        for (var i = 0; i < 9; i++) {
+          tem[i] = tem[i + 1]
+          hum[i] = hum[i + 1]
+          date[i] = date[i + 1]
+        }
+        tem[9] = json.temperature
+        hum[9] = json.humidity
+        date[9] = nowTime
+
+        option = {
+          title: {
+            text: '温湿度监测'
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {},
+          toolbox: {
+            show: true,
+            feature: {
+              dataZoom: {
+                yAxisIndex: 'none'
+              },
+              dataView: { readOnly: false },
+              magicType: { type: ['line', 'bar'] },
+              restore: {},
+              saveAsImage: {}
+            }
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: date,
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              formatter: '{value} °C'
+            }
+          },
+          series: [
+            {
+              name: '湿度',
+              type: 'line',
+              data: hum,
+              markPoint: {
+                data: [
+                  { type: 'max', name: 'Max' },
+                  { type: 'min', name: 'Min' }
+                ]
+              },
+              markLine: {
+                data: [{ type: 'average', name: 'Avg' }]
+              }
+            },
+            {
+              name: '温度',
+              type: 'line',
+              data: tem,
+              markPoint: {
+                data: [{ type: 'max', name: 'Max' },
+                { type: 'min', name: 'Min' }]
+              },
+              markLine: {
+                data: [
+                  { type: 'average', name: 'Avg' },
+                ]
+              }
+            }
+          ]
+        };
+
+        option && myChart.setOption(option);
+      });
+
+      //获取1号节点板状态
+      socket.on('module1', function (data) {
+        var str = data.msg
+        if (str == 'CLIENT-ONLINE') {
+          str = '在线'
+          $("#module1").html(str);
+          document.getElementById("module1").style.color = "lawngreen"
+        } else {
+          str = '离线'
+          $("#module1").html(str);
+          document.getElementById("module1").style.color = "white"
+        }
+      });
+
+      socket.on('time', function (data) {
+        $("#date").html(data.msg)
+      })
+    });
+
+  </script>
+</body>
+
+</html>

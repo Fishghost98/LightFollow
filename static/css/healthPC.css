@@ -1,0 +1,87 @@
+body {
+    background-color: black;
+    background-image: url('../img/1.png');
+    background-repeat: no-repeat;
+    background-position: 0% 0%;
+    background-size: cover;
+  }
+  
+  .title {
+    text-align: center;
+    margin-top: 15px;
+    height: 100px;
+    font-size: 40px;
+    color: aliceblue;
+  }
+  
+  .users {
+    margin-top: 10px;
+    margin-left: 20px;
+  }
+  .users p {
+    color: aliceblue;
+    font-size: 12px;
+    float: left;
+  }
+  .users span {
+    color: lawngreen;
+    font-size: 12px;
+    float: left;
+  }
+  
+  .left {
+    width: 55%;
+    float: left;
+  }
+  
+  .right {
+    width: 45%;
+    float: left;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .module1 {
+    margin-left: 80px;
+    font-size: 18px;
+    color: whitesmoke;
+  }
+  
+  .inputDiv {
+    margin-top: 40px;
+    margin-left: 80px;
+  }
+  
+  .inputDiv input {
+    color: black;
+    font-size: 18px;
+    width: 210px;
+  }
+  
+  .inputDiv span {
+    margin-left: 20px;
+    font-size: 18px;
+    color: whitesmoke;
+    float: left;
+  }
+  
+  .dataTable {
+    width: 70%;
+  }
+  
+  .movieName {
+    line-height: 34px;
+  }
+  
+  .funny {
+    margin-top: 20px;
+    line-height: 34px;
+  }
+  
+  .description {
+    color: red;
+    margin-left: 20px;
+    font-size: 15px;
+    margin-top: 20px;
+  }
+  
